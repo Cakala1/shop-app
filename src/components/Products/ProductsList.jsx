@@ -3,8 +3,27 @@ import useFetch from 'react-fetch-hook';
 import styled from 'styled-components'
 import { ImageContainer, ListContainer, ListItem, ItemImage, ItemDetails, ItemTitle, ItemPrice, QuantityContainer, QuantityButton, QuantityDisplay, ItemAdd } from './styles';
 
-const ProductsList = ({cart, setCart}) => {
-  const {isLoading, data, error} = useFetch('https://fakestoreapi.com/products');
+
+
+const ProductsList = ({cart, setCart, category}) => {
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  //const {isLoading, data, error} = useFetch('https://fakestoreapi.com/products');
+
+  useEffect(() => {
+    let url = "https://fakestoreapi.com/products";
+    console.log(category);
+    if(category != "all"){
+      url += "/category/" + category;
+    }
+    fetch(url)
+     .then(res=>res.json())
+      .then(json => setData(json))
+      .catch(err => setError(err))
+      .finally(() => setIsLoading(false));
+  }, [category]);
+
 
   const addToCart = (product) => {
     const {id, title, image, price} = product;
